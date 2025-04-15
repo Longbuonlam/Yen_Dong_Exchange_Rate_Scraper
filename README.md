@@ -1,1 +1,2 @@
-# Yen_Dong_Exchange_Rate_Scraper
+- This crawl yen-dong exchange rate from https://wise.com/us/currency-converter/jpy-to-vnd-rate/history
+- The data is everyday exchange rate at 7:00 AM from 2020-04-16 to 2025-04-15
