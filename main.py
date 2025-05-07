@@ -11,7 +11,7 @@ headers = {
 }
 
 # Define the start and end dates
-start_date = datetime(2020, 4, 16)
+start_date = datetime(2020, 5, 7)
 end_date = datetime(2025, 4, 15)
 
 # Initialize a list to store the data
@@ -24,7 +24,7 @@ while current_date <= end_date:
     date_str = current_date.strftime('%Y-%m-%dT00:00:00Z')
     
     # Define the API endpoint with query parameters
-    url = f'https://api.transferwise.com/v1/rates?source=JPY&target=VND&time={date_str}'
+    url = f'https://api.transferwise.com/v1/rates?source=USD&target=JPY&time={date_str}'
     
     # Make the API request
     response = requests.get(url, headers=headers)
@@ -48,7 +48,7 @@ while current_date <= end_date:
 df = pd.DataFrame(data)
 
 # Save the DataFrame to a CSV file
-df.to_csv('jpy_vnd_exchange_rates.csv', index=False)
+df.to_csv('usd_jpy_exchange_rates.csv', index=False)
 
-print("✅ Exchange rate data saved to 'jpy_vnd_exchange_rates.csv'")
+print("✅ Exchange rate data saved to 'usd_jpy_exchange_rates.csv'")
 
