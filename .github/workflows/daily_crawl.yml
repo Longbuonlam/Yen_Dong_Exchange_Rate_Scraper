@@ -1,0 +1,50 @@
+name: Daily Exchange Rate Crawl
+
+on:
+  schedule:
+    - cron: '0 0 * * *' 
+  workflow_dispatch:
+
+jobs:
+  crawl_and_upload:
+    runs-on: ubuntu-latest
+    env:
+      WISE_API_TOKEN: ${{ secrets.WISE_API_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: 'ap-southeast-1'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # --- JPY to VND ---
+      - name: Run JPY_VND crawl script
+        run: python main.py --source JPY --target VND
+
+      - name: Upload JPY_VND data to S3
+        run: python upload_file.py --source JPY --target VND
+
+      # --- USD to VND ---
+      - name: Run USD_VND crawl script
+        run: python main.py --source USD --target VND
+
+      - name: Upload USD_VND data to S3
+        run: python upload_file.py --source USD --target VND
+
+      # --- USD to JPY ---
+      - name: Run USD_JPY crawl script
+        run: python main.py --source USD --target JPY
+
+      - name: Upload USD_JPY data to S3
+        run: python upload_file.py --source USD --target JPY
