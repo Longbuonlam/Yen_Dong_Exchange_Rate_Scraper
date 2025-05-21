@@ -48,3 +48,18 @@ jobs:
 
       - name: Upload USD_JPY data to S3
         run: python upload_file.py --source USD --target JPY
+
+      - name: Commit and Push Exchange Rate CSVs
+        run: |
+          DATE_FOR_FILENAME=$(date -d "yesterday" '+%d-%m-%Y')
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'github-actions-bot@users.noreply.github.com'
+          # Add only the CSVs generated in this run, escaping parentheses for the shell
+          git add "*_exchange_rates\\($DATE_FOR_FILENAME\\).csv"
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No new CSVs to commit for $DATE_FOR_FILENAME."
+          else
+            git commit -m "Add daily exchange rates for $DATE_FOR_FILENAME"
+            git push
+          fi

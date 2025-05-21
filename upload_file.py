@@ -23,7 +23,7 @@ session = boto3.Session(
 
 s3 = session.client("s3")
 
-# --- New code for argument parsing and date calculation ---
+# --- argument parsing and date calculation ---
 parser = argparse.ArgumentParser(description="Upload exchange rate CSV to S3 for a given currency pair for the previous day.")
 parser.add_argument("--source", required=True, help="Source currency (e.g., JPY)")
 parser.add_argument("--target", required=True, help="Target currency (e.g., VND)")
@@ -36,8 +36,7 @@ target_currency = args.target.upper()
 # The GitHub Action runs at 00:00 UTC. We want data for the *previous* full day.
 date_processed = datetime.utcnow() - timedelta(days=1)
 date_str_file = date_processed.strftime('%d-%m-%Y') # Matches main.py filename date format
-date_str_s3_path = date_processed.strftime('%Y-%m-%d') # S3 path uses YYYY-MM-DD for better sorting
-# --- End of new code ---
+date_str_s3_path = date_processed.strftime('%d-%m-%Y') # S3 path uses DD-MM-YYYY
 
 
 bucket_name = "yen-vnd-rate-forcast-1205"
@@ -45,7 +44,7 @@ bucket_name = "yen-vnd-rate-forcast-1205"
 # Filename example: jpy_vnd_exchange_rates(20-05-2025).csv
 local_file_name = f"{source_currency.lower()}_{target_currency.lower()}_exchange_rates({date_str_file}).csv"
 
-# S3 object key example: uploads/jpy_vnd_exchange_rates/2025-05-20.csv
+# S3 object key example: uploads/jpy_vnd_exchange_rates/20-05-2025.csv
 s3_object_key = f"uploads/{source_currency.lower()}_{target_currency.lower()}_exchange_rates/{date_str_s3_path}.csv"
 
 
